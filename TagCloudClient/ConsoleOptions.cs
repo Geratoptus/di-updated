@@ -5,7 +5,7 @@ using CommandLine;
 
 namespace TagCloudClient;
 
-public class Options
+public class ConsoleOptions : IOptions
 {
     [Value(0, Required = true, HelpText = "Source file path")]
     public string Path { get; set; } = "";
