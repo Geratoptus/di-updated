@@ -9,24 +9,24 @@ namespace TagCloudClient;
 
 public static class SettingsFactory
 {
-    public static FileReaderSettings BuildFileReaderSettings(Options options)
+    public static FileReaderSettings BuildFileReaderSettings(IOptions options)
         => new(options.Path, options.UsingEncoding);
 
-    public static BitmapSettings BuildBitmapSettings(Options options)
+    public static BitmapSettings BuildBitmapSettings(IOptions options)
         => new(options.Size, options.Font, options.BackgroundColor, options.ForegroundColor);
     
-    public static FermatSpiralSettings BuildFermatSpiralSettings(Options options)
+    public static FermatSpiralSettings BuildFermatSpiralSettings(IOptions options)
         => new(options.Radius, options.AngleOffset);
 
-    public static PointLayouterSettings BuildPointLayouterSettings(Options options, IPointsGenerator generator)
+    public static PointLayouterSettings BuildPointLayouterSettings(IOptions options, IPointsGenerator generator)
         => new(options.Center, generator);
     
-    public static WordFileReaderSettings BuildWordReaderSettings(Options options)
+    public static WordFileReaderSettings BuildWordReaderSettings(IOptions options)
         => new(options.Path);
 
-    public static CsvFileReaderSettings BuildCsvReaderSettings(Options options) 
+    public static CsvFileReaderSettings BuildCsvReaderSettings(IOptions options) 
         => new(options.Path, options.Culture);
 
-    public static FileSaveSettings BuildFileSaveSettings(Options options)
+    public static FileSaveSettings BuildFileSaveSettings(IOptions options)
         => new(options.ImageName, options.ImageFormat);
 }
