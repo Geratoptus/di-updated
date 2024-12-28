@@ -9,34 +9,35 @@ namespace TagCloudTests.CloudLayouter.PointLayouter.Generators;
 [TestOf(typeof(FermatSpiralPointsGenerator))]
 public class FermatSpiralPointsGeneratorTest
 {
-    [Test]
-    public void ToIEnumerable_ShouldReturnExpectedEnumerable()
+    [TestCase(-1, 1, Description = "Negative radius")]
+    [TestCase(0, 1, Description = "Radius is zero")]
+    [TestCase(1, 0, Description = "AngleOffset is zero")]
+    [TestCase(1, -1, Description = "Negative angleOffset")]
+    public void ShouldThrowArgumentException_AfterWrongCreation(double radius, double angleOffset)
     {
-        const int elementsNumber = 1000;
-        var centerPoint = new Point(0, 0);
-        var expectedEnumerable = new FermatSpiralPointsGenerator(1, 0.5)
-            .GeneratePoints(centerPoint);
-        var enumerable = expectedEnumerable.Take(elementsNumber).ToList();
-        
-        using var enumerator = enumerable.GetEnumerator();
-        var actualEnumerable = enumerator.ToIEnumerable();
+        var creation = () => new FermatSpiralPointsGenerator(radius, angleOffset);
+        creation.Should().Throw<ArgumentException>();
 
-        actualEnumerable.Take(elementsNumber).Should()
-            .BeEquivalentTo(enumerable.Take(elementsNumber));
     }
 
-    [Test]
-    public void ToIEnumerable_ShouldContinueEnumeration()
+    [TestCaseSource(nameof(_generatePointsTestCases))]
+    public Point GeneratePoints_ShouldReturnCorrectPoint(double radius, double angleOffset, int pointNumber)
     {
-        const int elementsNumber = 10;
-
-        var startEnumerable = Enumerable.Range(0, elementsNumber);
-        using var movedEnumerator = startEnumerable.GetEnumerator();
-        movedEnumerator.MoveNext();
-        var actualEnumerable = movedEnumerator.ToIEnumerable();
-        var expectedEnumerable = Enumerable.Range(1, elementsNumber - 1);
-
-        actualEnumerable.Should().BeEquivalentTo(expectedEnumerable);
-
+        var pointsGenerator = new FermatSpiralPointsGenerator(radius, angleOffset);
+        var actualPoint = pointsGenerator
+            .GeneratePoints(new Point(0, 0))
+            .Skip(pointNumber)
+            .First();
+        return actualPoint;
     }
+
+    private static TestCaseData[] _generatePointsTestCases =
+    [
+        new TestCaseData(1, 125, 0).Returns(new Point(0, 0)),
+        new TestCaseData(10, 125, 1).Returns(new Point(-2, 3)),
+        new TestCaseData(1, 360, 1).Returns(new Point(1, 0)),
+        new TestCaseData(2, 180, 1).Returns(new Point(-1, 0)),
+        new TestCaseData(4, 90, 1).Returns(new Point(0, 1)),
+        new TestCaseData(4, 300, 1).Returns(new Point(2, -3))
+    ];
 }
